@@ -78,55 +78,60 @@ that extends the pack region as little as possible. Repeat until you finish with
 '''
 
 def find_solution(rectangles):
-	areas = []
 	solution = []
+	areas = []
 	areas = sort(rectangles)
-	#pack_images(rectangles, 1, 250)
-	
 	upper_left_x = 0
 	upper_left_y = 0
 
-	i = 0
-	j = 0
+	for area in areas:
+		length = area[1]
 
-	for rectangle in rectangles:
-		tuple = rectangles[j]
-		length = tuple[1]
-
-		while(upper_left_x <= int(avgWidth)):
-			tuple = rectangles[j]
-			width = tuple[0]
+		if(upper_left_x < int(avgWidth)):
+			width = area[0]
 			coordinate = (upper_left_x, upper_left_y)   # make a tuple
 			solution.insert(0, coordinate)             # insert tuple at front of list
 			upper_left_x = upper_left_x + width
-			j+1
-
-		upper_left_x = 0
-		upper_left_y = upper_left_y + length
-
+			#print str(upper_left_x) + '  ' + str(upper_left_y)
+			
+		else:
+			upper_left_x = 0
+			upper_left_y = upper_left_y + length
+	
+	solution.reverse();
 	return solution
 	#return find_naive_solution(rectangles)  # a working example!
 
 def sort(rectangles):
 	areas = []
+	sortedRect = []
 	width = 0
+	lenth = 0
 	n = 0
 	i = 0
+	sumWidth = 0
 	global avgWidth 
 	avgWidth= 0
-	x= 0 
-	for rectangle in rectangles:
-		width += rectangle[0]
-		areas.insert(i, rectangle[x]*rectangle[x+1])
-		n+=1
-		x+2
-		i+1
 	
+	for rectangle in rectangles:
+		width = rectangle[0]
+		length = rectangle[1]
+		sumWidth += rectangle[0]
+		coordinates = (width*length, width, length)
+		areas.insert(i, coordinates)
+		n+=1
+		i+1
 
-	avgWidth = (width)/(n) * math.sqrt(n)
+	avgWidth = (sumWidth)/(n) * math.sqrt(n)
 	avgWidth = math.floor(avgWidth)
-	print(avgWidth)
-	areas.sort(reverse=True)
+	areas.sort(key=lambda tup: tup[0], reverse=True)
 
-	return areas
+	j = 0
+	for area in areas:
+		sortedRect.insert(j, (area[1], area[2]))
+		j+1
+		print str(area[1]) + '  ' + str(area[2])
+
+
+	return sortedRect
 
