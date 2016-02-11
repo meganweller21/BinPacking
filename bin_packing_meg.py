@@ -78,29 +78,51 @@ that extends the pack region as little as possible. Repeat until you finish with
 '''
 
 def find_solution(rectangles):
+	coords = []
 	solution = []
-	areas = []
-	areas = sort(rectangles)
+	sortedRectangles = []
+	sortedRectangles = sort(rectangles)
+	sortedRectangles.reverse();
 	upper_left_x = 0
 	upper_left_y = 0
-
-	for area in areas:
-		length = area[1]
-
-		if(upper_left_x < int(avgWidth)):
-			width = area[0]
-			coordinate = (upper_left_x, upper_left_y)   # make a tuple
-			solution.insert(0, coordinate)             # insert tuple at front of list
-			upper_left_x = upper_left_x + width
-			#print str(upper_left_x) + '  ' + str(upper_left_y)
-			
-		else:
-			upper_left_x = 0
-			upper_left_y = upper_left_y + length
+	new_Y = 1
+	i = 0
 	
-	solution.reverse();
+	for sortedRectangle in sortedRectangles:
+
+				
+				length = sortedRectangle[1]
+				new_Y = 0
+			if(upper_left_x <= int(avgWidth) | upper_left_x == 0):
+				width = sortedRectangle[0]
+				coordinate = (upper_left_x, upper_left_y)   # make a tuple
+				coords.insert(0, (coordinate, sortedRectangle[2]))          # insert tuple at front of list
+				upper_left_x = upper_left_x + width
+				print str(sortedRectangle[0]) + '  ' + str(sortedRectangle[1])
+				#print str(upper_left_x) + '  ' + str(upper_left_y)
+			else:
+				upper_left_y = upper_left_y - length
+				upper_left_x  = 0
+				coordinate = (upper_left_x, upper_left_y)
+				width = sortedRectangle[0]
+				upper_left_x = width
+				coords.insert(0, (coordinate, sortedRectangle[2]))
+				new_Y = 1
+				print str(sortedRectangle[0]) + '  ' + str(sortedRectangle[1])
+				#print str(upper_left_x) + '  ' + str(upper_left_y)
+		
+		
+	coords.sort(key=lambda tup: tup[1])
+	coords.reverse()
+
+	i = 0 
+	for coord in coords:
+		solution.insert(i, coord[0])
+		i+1
+	
 	return solution
 	#return find_naive_solution(rectangles)  # a working example!
+
 
 def sort(rectangles):
 	areas = []
@@ -112,25 +134,27 @@ def sort(rectangles):
 	sumWidth = 0
 	global avgWidth 
 	avgWidth= 0
+
+	#n is my token to keep track of the specific rectangle
 	
 	for rectangle in rectangles:
 		width = rectangle[0]
 		length = rectangle[1]
 		sumWidth += rectangle[0]
-		coordinates = (width*length, width, length)
+		coordinates = (width*length, width, length, n)
 		areas.insert(i, coordinates)
 		n+=1
 		i+1
 
 	avgWidth = (sumWidth)/(n) * math.sqrt(n)
 	avgWidth = math.floor(avgWidth)
-	areas.sort(key=lambda tup: tup[0], reverse=True)
+	areas.sort(key=lambda tup: tup[2], reverse=True)
 
 	j = 0
 	for area in areas:
-		sortedRect.insert(j, (area[1], area[2]))
+		sortedRect.insert(j, (area[1], area[2], area[3]))
 		j+1
-		print str(area[1]) + '  ' + str(area[2])
+		#print str(area[1]) + '  ' + str(area[2])
 
 
 	return sortedRect

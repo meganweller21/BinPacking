@@ -144,7 +144,7 @@ RETURNS: a list of tuples, e.g. [(a1, b1, c1, d1), ... (an, bn, cn, dn)] where
 
 def corner_coordinates (dimensions, upper_left):   
     answer = []
-    
+
     for i in range(len(dimensions)):
         coordinate = upper_left[i]      # (x, y) of upper left
         dimension = dimensions[i]       # (width, length) of rectangle
@@ -152,6 +152,7 @@ def corner_coordinates (dimensions, upper_left):
         upper_y = coordinate[1]
         lower_x = upper_x + dimension[0]
         lower_y = upper_y - dimension[1]
+        #print "Dim: " + str(upper_x) + " " + str(upper_y) + " " + str(lower_x) + " " + str(lower_y)
         answer.insert(0, (upper_x, upper_y, lower_x, lower_y))
         
     answer.reverse()                    # original order
