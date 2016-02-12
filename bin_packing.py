@@ -9,6 +9,8 @@
 # ----------------------------------------------
 
 Strategy:
+
+Version 1:
 Create a dynamically growing square area
 Sort objects by width in decreasing order
 Build a binary tree
@@ -21,6 +23,14 @@ Build a binary tree
   --Give that node two children
   --Left child: remaining space below the rectangle
   --Right child: remaining space to the right of the rectangle
+
+
+Version 2:
+Create horizontal lines by sorting all the rectangles by heights
+-The largest height will be at (0,0)
+-X will grow until a specified point
+-Will pack the bin until array is done
+
 
 FIND_NAIVE_SOLUTION:
 	Line the the top left corners of the rectangles up along
