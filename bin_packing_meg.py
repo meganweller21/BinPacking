@@ -78,11 +78,16 @@ that extends the pack region as little as possible. Repeat until you finish with
 '''
 
 def find_solution(rectangles):
+	#make arrays here
 	coords = []
 	solution = []
 	sortedRectangles = []
 	sortedRectangles = sort(rectangles)
+
+	#reverse the array so we start off at 0
 	sortedRectangles.reverse();
+
+	#initialize variables
 	upper_left_x = 0
 	upper_left_y = 0
 	new_Y = 1
@@ -90,31 +95,36 @@ def find_solution(rectangles):
 	
 	for sortedRectangle in sortedRectangles:
 
-				
-				length = sortedRectangle[1]
-				new_Y = 0
-			if(upper_left_x <= int(avgWidth) | upper_left_x == 0):
+				length = sortedRectangle[1]		#assign length - NEEDS to be fixed!
+				new_Y = 0						#boolean, tried to set up a boolean system with the length
+			if(upper_left_x <= int(avgWidth)):	#if x is less than out set width, assign coordinates to rectangles
 				width = sortedRectangle[0]
 				coordinate = (upper_left_x, upper_left_y)   # make a tuple
 				coords.insert(0, (coordinate, sortedRectangle[2]))          # insert tuple at front of list
-				upper_left_x = upper_left_x + width
-				print str(sortedRectangle[0]) + '  ' + str(sortedRectangle[1])
+				upper_left_x = upper_left_x + width 						# assign new width
+				#print statements to check
+				#print str(sortedRectangle[0]) + '  ' + str(sortedRectangle[1])
 				#print str(upper_left_x) + '  ' + str(upper_left_y)
+
+			#once we reach the x limit, add to (0, length)	
 			else:
-				upper_left_y = upper_left_y - length
+				upper_left_y = upper_left_y - length	#subtracting to make sense of an x/y coordinate
 				upper_left_x  = 0
-				coordinate = (upper_left_x, upper_left_y)
+				coordinate = (upper_left_x, upper_left_y)	# make a tuple
 				width = sortedRectangle[0]
-				upper_left_x = width
-				coords.insert(0, (coordinate, sortedRectangle[2]))
-				new_Y = 1
-				print str(sortedRectangle[0]) + '  ' + str(sortedRectangle[1])
+				upper_left_x = width 						#reassign x
+				coords.insert(0, (coordinate, sortedRectangle[2]))	 # insert tuple at front of list
+				new_Y = 1			#boolean that doesn't work
+
+				#print statements to check
+				#print str(sortedRectangle[0]) + '  ' + str(sortedRectangle[1])
 				#print str(upper_left_x) + '  ' + str(upper_left_y)
 		
-		
+	#I am sorting by the "token", when calculating the corner coordinates, it was not using the right dimensions
 	coords.sort(key=lambda tup: tup[1])
 	coords.reverse()
 
+	#only insert our coordinates into the solution
 	i = 0 
 	for coord in coords:
 		solution.insert(i, coord[0])
@@ -125,13 +135,17 @@ def find_solution(rectangles):
 
 
 def sort(rectangles):
+	#intilize arrays
 	areas = []
 	sortedRect = []
+
+	#initalize variables
 	width = 0
 	lenth = 0
 	n = 0
 	i = 0
 	sumWidth = 0
+	#global variable to use in packing
 	global avgWidth 
 	avgWidth= 0
 
@@ -148,9 +162,11 @@ def sort(rectangles):
 
 	avgWidth = (sumWidth)/(n) * math.sqrt(n)
 	avgWidth = math.floor(avgWidth)
+	#sort by heights
 	areas.sort(key=lambda tup: tup[2], reverse=True)
 
 	j = 0
+	#insert only the coordinates and the token
 	for area in areas:
 		sortedRect.insert(j, (area[1], area[2], area[3]))
 		j+1
