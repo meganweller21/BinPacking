@@ -6,8 +6,8 @@
 
 import random
 import time
-#import bin_packing
-import bin_packing_meg
+import bin_packing
+
 
 # -----------------------------------------------
 
@@ -263,7 +263,7 @@ def solve_problem(file_name):
 
     # get student solution and measure tie
     start = time.time()
-    upper_left_coordinates = bin_packing_meg.find_solution(clone)
+    upper_left_coordinates = bin_packing.find_solution(clone)
     time_elapsed = time.time() - start
     print("Time elapsed in seconds =", time_elapsed)
 

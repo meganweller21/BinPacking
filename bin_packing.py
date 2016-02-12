@@ -70,200 +70,131 @@ RETURNS: a list of tuples that designate the top left corner placement,
 """
 
 '''
+Our find_solution:
+Pass the rectangles array into the sorting method, which will bring back a sorted list of largest height to smallest in
+sortedRectangle[]. Keep track of the length of the far left box to add onto the length later. Begin by packing the 
+rectangles in (x, 0) until we reach our avgWidth. Once that is complete, assign a new length by adding the length of the
+far left rectangle to the length and assign upper_left_x to 0. Add that box to it's new position and repeat until the bin
+is packed.
 
-Megan Notes:
-Put the largest rectangle remaining into your packed area. If it can't fit anywhere, place it in a place 
-that extends the pack region as little as possible. Repeat until you finish with the smallest rectangle.
+Sort the rectangles by their token to match the dimenions in the squares.txt file. And finally, add the coordinates
+to solution[] and return the optimized bin packing solution.
 
 '''
 
 def find_solution(rectangles):
-
-	areas = []
+	#make arrays here
+	coords = []
 	solution = []
-	areas = sort(rectangles)
-	#pack_images(rectangles, 1, 250)
-	
+	sortedRectangles = []
+	keepY = []
+	sortedRectangles = sort(rectangles)
+
+	#reverse the array so we start off at 0
+	sortedRectangles.reverse();
+
+	#initialize variables, our x and y and the array index
 	upper_left_x = 0
 	upper_left_y = 0
-
-	i = 0
 	j = 0
 
-	for rectangle in rectangles:
-		tuple = rectangles[j]
-		length = tuple[1]
+	for sortedRectangle in sortedRectangles:
 
-		while(upper_left_x <= int(avgWidth)):
-			tuple = rectangles[j]
-			width = tuple[0]
-			coordinate = (upper_left_x, upper_left_y)   # make a tuple
-			solution.insert(0, coordinate)             # insert tuple at front of list
-			upper_left_x = upper_left_x + width
-			j+1
+			#finds the length of the rectangle and puts it in an array list
+			length = sortedRectangle[1]		
+			keepY.insert(j, length)
+			#if x is less than out set width, assign coordinates to rectangles
+			if(upper_left_x <= int(avgWidth)):		
+				width = sortedRectangle[0]
+				coordinate = (upper_left_x, upper_left_y)   # make a tuple
+				coords.insert(0, (coordinate, sortedRectangle[2]))          # insert tuple at front of list
+				upper_left_x = upper_left_x + width 						# assign new width
+				#print statements to check
+				#print str(sortedRectangle[0]) + '  ' + str(sortedRectangle[1])
+				#print str(upper_left_x) + '  ' + str(upper_left_y)
+				j+1
+			#once we reach the x limit, add to (0, length)	
+			else:
+				#grab the 0th index (the y we need)
+				keepY.reverse()
+				upper_left_y = upper_left_y - keepY[0]	#subtracting to make sense of an x/y coordinate
+				
+				upper_left_x  = 0
+				coordinate = (upper_left_x, upper_left_y)	# make a tuple
+				width = sortedRectangle[0]
+				upper_left_x = width 						#reassign x
+				coords.insert(0, (coordinate, sortedRectangle[2]))	 # insert tuple at front of list
+				#reset the array point
+				j = 0
 
-		upper_left_x = 0
-		upper_left_y = upper_left_y + length
+				#print statements to check
+				#print str(sortedRectangle[0]) + '  ' + str(sortedRectangle[1])
+				#print str(upper_left_x) + '  ' + str(upper_left_y)
+		
+	#I am sorting by the "token", when calculating the corner coordinates, it was not using the right dimensions
+	coords.sort(key=lambda tup: tup[1])
+	coords.reverse()
 
-	return solution
-	#return find_naive_solution(rectangles)  # a working example!
-
-'''
-Ashley's find solution:
-def find_solution(rectangles):
-
-	sort_by_max_width(rectangles)
-	return find_naive_solution(rectangles)  # a working example!
-'''
-
-
-def get_hard_coded():
-	hard_coded = [(5,1),(1,6),(3,4),(7,8)]#,(5,8),(4,7),(1,6),(10,2),(9,3),(4,5)]
-	return hard_coded
-
-def get_size_of_list(rectangles):
-	#rectangles = get_hard_coded()
-	num_rectangles = len(rectangles)
-	num_in_a_row = int(math.sqrt(num_rectangles))
-	print(num_in_a_row)
-
-def find_next_biggest(rectangles):
-	rectangles = get_hard_coded()			
-	temp = tuple(map(sorted, zip(*rectangles)))
-	max_width = temp[0][-1]
-	max_height = temp[1][-1]
-	if(max_width > max_height):
-		return temp[0][-1]
-	else:
-		return temp[1][-1]
-
-def sort(rectangles):
-	rectangles = get_hard_coded()			
-	heights = []
+	#only insert our coordinates into the solution
+	i = 0 
+	for coord in coords:
+		solution.insert(i, coord[0])
+		i+1
 	
+	return solution
 
-	#Megan stuff:
+'''
+Sort:
+We started sorting by the largest area to the smallest, but ended up using the height, the first sorting for loop
+is unncessary, but is there if needed. Begin by calculating the area of weight and length and add it to a coordinate.
+N is the token, or the spot in the text file, it comes from. We were having issues with it not calculating the corner
+coordinates in the driver.
+
+Also, keep track of the total sum of all of the widths.
+
+Calculate the avgWidth that we want to work with by dividing n boxes by the sumWidth and multiply the square root of n.
+This will give us a sqaure that we will pack into when we find the solution.
+
+Finally, add the width, length, and token into sortedRect and return the sorted array.
+'''
+def sort(rectangles):
+	#intilize arrays
 	areas = []
-	i = 0
-	n=0
+	sortedRect = []
+
+	#initalize variables
 	width = 0
+	lenth = 0
+	n = 0
+	i = 0
+	sumWidth = 0
+	#global variable to use in packing
 	global avgWidth 
 	avgWidth= 0
-	x= 0 
 
+	#n is my token to keep track of the specific rectangle
+	
 	for rectangle in rectangles:
-		width += rectangle[0]
-		areas.insert(i, rectangle[x]*rectangle[x+1])
-
-		'''
-		#	areas.insert(i, rectangle[0]*rectangle[1])
-		heights.insert(i, rectangle[1])
-		i+1
-	#areas.sort(reverse=True)
-	heights.sort(reverse=True)
-	#print(heights)
-		'''	
+		width = rectangle[0]
+		length = rectangle[1]
+		sumWidth += rectangle[0]
+		coordinates = (width*length, width, length, n)
+		areas.insert(i, coordinates)
 		n+=1
-		x+2
 		i+1
-	
-	avgWidth = (width)/(n) * math.sqrt(n)
+
+	avgWidth = (sumWidth)/(n) * math.sqrt(n)
 	avgWidth = math.floor(avgWidth)
-	areas.sort(reverse=True)
+	#sort by heights
+	areas.sort(key=lambda tup: tup[2], reverse=True)
 
-	return areas
-
-
-def sort_by_max_width(rectangles):
-	rectangles = get_hard_coded()
-	sorted_rectangles = sorted(rectangles, key=lambda x: (x[0], x[0]))
-	sorted_rectangles.reverse()
-	#for rectangle in sorted_rectangles:
-	#	print(rectangle)
-	return sorted_rectangles
-
-def pack_images(rectangles, grow_mode, max_dim):
-    root=()
-    while rectangles:
-        rectangle = rectangles.pop()
-        if not root:
-            if (grow_mode):
-                root = rect_node((), rectangle(0, 0, rectangle[0], rectangle[1]))
-            else:
-                root = rect_node((), rectangle(0, 0, max_dim[0], max_dim[1]))
-            root.split_node(rectangle)
-            continue
-        leaf = find_empty_leaf(root, rectangle.img)
-        if (leaf):
-            leaf.split_node(rectangle)
-        else:
-            if (grow_mode):
-                root.grow_node(rectangle)
-            else:
-                raise Exception("Can't pack images into a %d by %d rectangle." % max_dim)
-    return root
-
-def build_tree():
-	rectangles = sort_by_max_width()
-	
-class BinaryTree():
-
-    def __init__(self, width, height, x, y):
-      self.left = None
-      self.right = None
-      self.width = width
-      self.height = height
-      self.x = x
-      self.y = y
-
-	def getLeftChild(self):
-        return self.left
-    def getRightChild(self):
-        return self.right
-    def setNodeValue(self, width, height, x, y):
-        self.width = width
-        self.height = height
-    	self.x = x
-    	self.y = y
-    def getNodeWidth(self):
-        return self.width
-    def getNodeHeight(self):
-    	return self.height
-    def getNodeX(self):
-    	return self.x
-    def getNodeY(self):
-    	return self.y
-    def insertRight(self,newNode):
-        if self.right == None:
-            self.right = BinaryTree(newNode)
-        else:
-            tree = BinaryTree(newNode)
-            tree.right = self.right
-            self.right = tree
-
-    def insertLeft(self,newNode):
-        if self.left == None:
-            self.left = BinaryTree(newNode)
-        else:
-            tree = BinaryTree(newNode)
-            self.left = tree
-            tree.left = self.left
+	j = 0
+	#insert only the coordinates and the token
+	for area in areas:
+		sortedRect.insert(j, (area[1], area[2], area[3]))
+		j+1
+		#print str(area[1]) + '  ' + str(area[2])
 
 
-def printTree(tree):
-        if tree != None:
-            printTree(tree.getLeftChild())
-            print(tree.getNodeValue())
-            printTree(tree.getRightChild())
-
-
-
-# test tree
-
-def testTree():
-    myTree = BinaryTree("Maud")
-    myTree.insertLeft("Bob")
-    myTree.insertRight("Tony")
-    myTree.insertRight("Steven")
-    printTree(myTree)
+	return sortedRect
 

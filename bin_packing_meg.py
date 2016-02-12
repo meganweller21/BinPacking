@@ -70,10 +70,15 @@ RETURNS: a list of tuples that designate the top left corner placement,
 """
 
 '''
+Our find_solution:
+Pass the rectangles array into the sorting method, which will bring back a sorted list of largest height to smallest in
+sortedRectangle[]. Keep track of the length of the far left box to add onto the length later. Begin by packing the 
+rectangles in (x, 0) until we reach our avgWidth. Once that is complete, assign a new length by adding the length of the
+far left rectangle to the length and assign upper_left_x to 0. Add that box to it's new position and repeat until the bin
+is packed.
 
-Megan Notes:
-Put the largest rectangle remaining into your packed area. If it can't fit anywhere, place it in a place 
-that extends the pack region as little as possible. Repeat until you finish with the smallest rectangle.
+Sort the rectangles by their token to match the dimenions in the squares.txt file. And finally, add the coordinates
+to solution[] and return the optimized bin packing solution.
 
 '''
 
@@ -82,22 +87,24 @@ def find_solution(rectangles):
 	coords = []
 	solution = []
 	sortedRectangles = []
+	keepY = []
 	sortedRectangles = sort(rectangles)
 
 	#reverse the array so we start off at 0
 	sortedRectangles.reverse();
 
-	#initialize variables
+	#initialize variables, our x and y and the array index
 	upper_left_x = 0
 	upper_left_y = 0
-	new_Y = 1
-	i = 0
-	
+	j = 0
+
 	for sortedRectangle in sortedRectangles:
 
-				length = sortedRectangle[1]		#assign length - NEEDS to be fixed!
-				new_Y = 0						#boolean, tried to set up a boolean system with the length
-			if(upper_left_x <= int(avgWidth)):	#if x is less than out set width, assign coordinates to rectangles
+			#finds the length of the rectangle and puts it in an array list
+			length = sortedRectangle[1]		
+			keepY.insert(j, length)
+			#if x is less than out set width, assign coordinates to rectangles
+			if(upper_left_x <= int(avgWidth)):		
 				width = sortedRectangle[0]
 				coordinate = (upper_left_x, upper_left_y)   # make a tuple
 				coords.insert(0, (coordinate, sortedRectangle[2]))          # insert tuple at front of list
@@ -105,16 +112,20 @@ def find_solution(rectangles):
 				#print statements to check
 				#print str(sortedRectangle[0]) + '  ' + str(sortedRectangle[1])
 				#print str(upper_left_x) + '  ' + str(upper_left_y)
-
+				j+1
 			#once we reach the x limit, add to (0, length)	
 			else:
-				upper_left_y = upper_left_y - length	#subtracting to make sense of an x/y coordinate
+				#grab the 0th index (the y we need)
+				keepY.reverse()
+				upper_left_y = upper_left_y - keepY[0]	#subtracting to make sense of an x/y coordinate
+				
 				upper_left_x  = 0
 				coordinate = (upper_left_x, upper_left_y)	# make a tuple
 				width = sortedRectangle[0]
 				upper_left_x = width 						#reassign x
 				coords.insert(0, (coordinate, sortedRectangle[2]))	 # insert tuple at front of list
-				new_Y = 1			#boolean that doesn't work
+				#reset the array point
+				j = 0
 
 				#print statements to check
 				#print str(sortedRectangle[0]) + '  ' + str(sortedRectangle[1])
@@ -131,9 +142,21 @@ def find_solution(rectangles):
 		i+1
 	
 	return solution
-	#return find_naive_solution(rectangles)  # a working example!
 
+'''
+Sort:
+We started sorting by the largest area to the smallest, but ended up using the height, the first sorting for loop
+is unncessary, but is there if needed. Begin by calculating the area of weight and length and add it to a coordinate.
+N is the token, or the spot in the text file, it comes from. We were having issues with it not calculating the corner
+coordinates in the driver.
 
+Also, keep track of the total sum of all of the widths.
+
+Calculate the avgWidth that we want to work with by dividing n boxes by the sumWidth and multiply the square root of n.
+This will give us a sqaure that we will pack into when we find the solution.
+
+Finally, add the width, length, and token into sortedRect and return the sorted array.
+'''
 def sort(rectangles):
 	#intilize arrays
 	areas = []
